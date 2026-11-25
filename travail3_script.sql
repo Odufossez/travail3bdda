@@ -442,23 +442,26 @@ use tableau_bord;
 
 /* SUPPRESSION DE VOS RÔLE ET UTILISATEURS */
 /* IMPORTANT : NE PAS SUPPRIMER VOTRE COMPTE DBA */
-drop role if exists 'dev_a' ;
-drop role if exists 'dev_b' ;
-drop role if exists 'analyste';
+drop role if exists 'dev_a'@'localhost' ;
+drop role if exists 'dev_b'@'localhost' ;
+drop role if exists 'analyste'@'localhost';
+
+drop user if exists 'alexandre'@'localhost' , 'ariette'@'localhost' , 'brigitte'@'localhost' , 'bruno'@'localhost',
+    'steve'@'localhost' , 'amir'@'localhost' , 'app_tableau_bord'@'localhost' ;
 
 
 /* CRÉATION DE VOS RÔLE ET UTILISATEURS */
-create role 'dba'@'localhost';
+create role if not exists 'dba'@'localhost';
 GRANT ALL PRIVILEGES ON *.* TO 'dba'@'localhost' ;
 
 create role 'dev_a'@'localhost' ;
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES, CREATE VIEW, SHOW VIEW,
+GRANT USAGE, SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES, CREATE VIEW, SHOW VIEW,
     CREATE ROUTINE, ALTER ROUTINE, EXECUTE, EVENT, TRIGGER, LOCK TABLES
     ON inventaire_a.*
     TO 'dev_a'@'localhost';
 
 create role 'dev_b'@'localhost' ;
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES, CREATE VIEW, SHOW VIEW,
+GRANT USAGE, SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES, CREATE VIEW, SHOW VIEW,
     CREATE ROUTINE, ALTER ROUTINE, EXECUTE, EVENT, TRIGGER, LOCK TABLES
     ON inventaire_b.*
     TO 'dev_a'@'localhost';
@@ -477,12 +480,16 @@ create user 'amir'@'localhost' identified by 'securite' ;
 /* ASSOCIATION DES ROLES AUX UTILISATEURS */
 grant 'dev_a'@'localhost' to 'alexandre'@'localhost', 'ariette'@'localhost', 'steve'@'localhost' ;
 grant 'dev_b'@'localhost' to 'bruno'@'localhost','brigitte'@'localhost','steve'@'localhost';
+grant 'analyste'@'localhost' to 'amir'@'localhost';
 
 /* DÉFINITION DES ROLES PAR DEFAUT */
-
+set default role 'dev_a'@'localhost' to 'alexandre'@'localhost', 'ariette'@'localhost', 'steve'@'localhost' ;
+set default role 'dev_b'@'localhost' to 'bruno'@'localhost','brigitte'@'localhost','steve'@'localhost';
+set default role 'analyste'@'localhost' to 'amir'@'localhost';
 
 /* VALIDATION AVANT DE CONTINUER */
--- show grants for 'alexandre'@'localhost';
+show grants for 'dev_a'@'localhost';
+show grants for 'alexandre'@'localhost';
 -- show grants for 'bruno'@'localhost';
 -- show grants for 'steve'@'localhost';
 -- show grants for 'amir'@'localhost';
